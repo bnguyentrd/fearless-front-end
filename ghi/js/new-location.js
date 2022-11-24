@@ -25,6 +25,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   const formTag = document.getElementById('create-location-form');
   formTag.addEventListener('submit', async (event) => {
     event.preventDefault();
+    
     const formData = new FormData(formTag);
     const json = JSON.stringify(Object.fromEntries(formData));
   //   console.log(json);

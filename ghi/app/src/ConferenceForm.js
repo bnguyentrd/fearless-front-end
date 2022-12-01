@@ -1,142 +1,142 @@
 import React from 'react';
 
 class ConferenceForm extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            name: '',
-            starts: '',
-            ends: '',
-            description: '',
-            maxPresentations: '',
-            maxAttendees: '',
-            locations: []
-        };
-        this.handleNameChange = this.handleNameChange.bind(this);
-        this.handleStartsChange = this.handleStartsChange.bind(this);
-        this.handleEndsChange = this.handleEndsChange.bind(this);
-        this.handleDescriptionChange = this.handleDescriptionChange.bind(this);
-        this.handleMaxPresentationsChange = this.handleMaxPresentationsChange.bind(this);
-        this.handleMaxAttendeesChange = this.handleMaxAttendeesChange.bind(this);
-        this.handleLocationChange = this.handleLocationChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-    }
+  constructor(props) {
+    super(props);
+    this.state = {
+      name: '',
+      starts: '',
+      ends: '',
+      description: '',
+      max_presentations: '',
+      max_attendees: '',
+      location: '',
+      locations: [],
+    };
 
-    async handleSubmit(event) {
-        event.preventDefault();
-        const data = {...this.state};
-        data.max_presentations = data.maxPresentations;
-        data.max_attendees = data.maxAttendees;
-        delete data.maxAttendees;
-        delete data.maxPresentations;
-        delete data.locations;
-        console.log(data);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleChangeDescription = this.handleChangeDescription.bind(this);
+    this.handleChangeEnds = this.handleChangeEnds.bind(this);
+    this.handleChangeLocation = this.handleChangeLocation.bind(this);
+    this.handleChangeMaxAttendees = this.handleChangeMaxAttendees.bind(this);
+    this.handleChangeMaxPresentations = this.handleChangeMaxPresentations.bind(this);
+    this.handleChangeName = this.handleChangeName.bind(this);
+    this.handleChangeStarts = this.handleChangeStarts.bind(this);
+  }
 
-        const conferenceUrl = 'http://localhost:8000/api/conferences/';
-        const fetchConfig = {
-          method: "post",
-          body: JSON.stringify(data),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        };
-        const response = await fetch(conferenceUrl, fetchConfig);
-        if (response.ok) {
-          const newConference = await response.json();
-          console.log(newConference);
-          const cleared = {
-            name: '',
-            starts: '',
-            ends: '',
-            description: '',
-            maxPresentations: '',
-            maxAttendees: '',
-            location: '',
-          };
-          this.setState(cleared);
-        }
-      }
-    handleStartsChange(event) {
-        const value = event.target.value;
-        this.setState({starts: value})
-    }
-    handleEndsChange(event) {
-        const value = event.target.value;
-        this.setState({ends: value})
-    }
-    handleDescriptionChange(event) {
-        const value = event.target.value;
-        this.setState({description: value})
-    }
-    handleNameChange(event) {
-        const value = event.target.value;
-        this.setState({name: value})
-    }
-    handleMaxPresentationsChange(event) {
-        const value = event.target.value;
-        this.setState({maxPresentations: value})
-    }
-    handleMaxAttendeesChange(event) {
-        const value = event.target.value;
-        this.setState({maxAttendees: value})
-    }
-    handleLocationChange(event) {
-        const value = event.target.value;
-        this.setState({location: value})
-    }
+  async componentDidMount() {
+    const url = 'http://localhost:8000/api/locations/';
 
-    async componentDidMount() {
-        const url = 'http://localhost:8000/api/locations/';
+    const response = await fetch(url);
 
-        const response = await fetch(url);
+    if (response.ok) {
+      const data = await response.json();
+      this.setState({ locations: data.locations });
+    }
+  }
 
-        if (response.ok) {
-          const data = await response.json();
-            this.setState({locations: data.locations})
-         }
-        }
+  async handleSubmit(event) {
+    event.preventDefault();
+    const data = {...this.state};
+    delete data.locations;
 
-    render() {
-        return (
+    const locationUrl = 'http://localhost:8000/api/conferences/';
+    const fetchConfig = {
+      method: "post",
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+    const response = await fetch(locationUrl, fetchConfig);
+    if (response.ok) {
+      const newConference = await response.json();
+      console.log(newConference);
+      this.setState({
+        name: '',
+        starts: '',
+        ends: '',
+        description: '',
+        max_presentations: '',
+        max_attendees: '',
+        location: '',
+      });
+    }
+  }
 
-        <div className="row">
+  handleChangeName(event) {
+    const value = event.target.value;
+    this.setState({ name: value });
+  }
+
+  handleChangeStarts(event) {
+    const value = event.target.value;
+    this.setState({ starts: value });
+  }
+
+  handleChangeEnds(event) {
+    const value = event.target.value;
+    this.setState({ ends: value });
+  }
+
+  handleChangeDescription(event) {
+    const value = event.target.value;
+    this.setState({ description: value });
+  }
+
+  handleChangeMaxPresentations(event) {
+    const value = event.target.value;
+    this.setState({ max_presentations: value });
+  }
+
+  handleChangeMaxAttendees(event) {
+    const value = event.target.value;
+    this.setState({ max_attendees: value });
+  }
+
+  handleChangeLocation(event) {
+    const value = event.target.value;
+    this.setState({ location: value });
+  }
+
+  render() {
+    return (
+      <div className="row">
         <div className="offset-3 col-6">
           <div className="shadow p-4 mt-4">
             <h1>Create a new conference</h1>
             <form onSubmit={this.handleSubmit} id="create-conference-form">
               <div className="form-floating mb-3">
-                <input onChange={this.handleNameChange} placeholder="Name" required type="text" name="name" id="id" className="form-control" value={this.state.name}/>
+                <input onChange={this.handleChangeName} placeholder="Name" required type="text" name="name" id="name" className="form-control" />
                 <label htmlFor="name">Name</label>
-                </div>
-                <div className="form-floating mb-3">
-                <input onChange={this.handleStartsChange} placeholder="starts" required type="date" name="starts" id="starts" className="form-control" value={this.state.starts}/>
+              </div>
+              <div className="form-floating mb-3">
+                <input onChange={this.handleChangeStarts} placeholder="Starts" required type="date" name="starts" id="starts" className="form-control" />
                 <label htmlFor="starts">Starts</label>
-                </div>
-                <div className="form-floating mb-3">
-                <input onChange={this.handleEndsChange} placeholder="ends" required type="date" name="ends" id="ends" className="form-control" value={this.state.ends}/>
+              </div>
+              <div className="form-floating mb-3">
+                <input onChange={this.handleChangeEnds} placeholder="Ends" required type="date" name="ends" id="ends" className="form-control" />
                 <label htmlFor="ends">Ends</label>
-                </div>
-                <div className="mb-3">
-                <label htmlFor="description" className="form-label">Description</label>
-                <textarea onChange={this.handleDescriptionChange} className="form-control" name= "description" id="description" rows="3" value={this.state.description}></textarea>
-                </div>
-                <div className="form-floating mb-3">
-                <input onChange={this.handleMaxPresentationsChange} placeholder="max_presentations" required type="number" name="max_presentations" id="max_presentations" className="form-control" value={this.state.maxPresentations}/>
-                <label htmlFor="max_presentations">Maximum Presentations</label>
-                </div>
-                <div className="form-floating mb-3">
-                <input onChange={this.handleMaxAttendeesChange} placeholder="max_attendees" required type="number" name="max_attendees" id="max_attendees" className="form-control" value={this.state.maxAttendees}/>
-                <label htmlFor="max_attendees">Maximum Attendees</label>
-                 </div>
-                <div className="mb-3">
-                <select onChange={this.handleLocationChange} required id="location" name= "location" className="form-select" value={this.state.location}>
+              </div>
+              <div className="mb-3">
+                <label htmlFor="description">Description</label>
+                <textarea onChange={this.handleChangeDescription} className="form-control" id="description" rows="3" name="description" className="form-control"></textarea>
+              </div>
+              <div className="form-floating mb-3">
+                <input onChange={this.handleChangeMaxPresentations} placeholder="Maximum presentations" required type="number" name="max_presentations" id="max_presentations" className="form-control" />
+                <label htmlFor="max_presentations">Maximum presentations</label>
+              </div>
+              <div className="form-floating mb-3">
+                <input onChange={this.handleChangeMaxAttendees} placeholder="Maximum attendees" required type="number" name="max_attendees" id="max_attendees" className="form-control" />
+                <label htmlFor="max_attendees">Maximum attendees</label>
+              </div>
+              <div className="mb-3">
+                <select onChange={this.handleChangeLocation} required name="location" id="location" className="form-select">
                   <option value="">Choose a location</option>
                   {this.state.locations.map(location => {
                     return (
-                    <option key={location.id} value={location.id}>
-                        {location.name}
-                    </option>
-                    );
+                      <option key={location.id} value={location.id}>{location.name}</option>
+                    )
                   })}
                 </select>
               </div>
@@ -145,9 +145,8 @@ class ConferenceForm extends React.Component {
           </div>
         </div>
       </div>
-
-        );
-    }
+    );
+  }
 }
 
-export default ConferenceForm
+export default ConferenceForm;
